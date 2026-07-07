@@ -19,6 +19,8 @@ const upload = multer({
   storage,
 });
 
-router.post("/upload", upload.single("pdf"), uploadPDF);
+export const pdfRoutes = (router) => {
+  router.route("/upload").post(upload.single("pdf"), uploadPDF);
+};
 
 export default router;

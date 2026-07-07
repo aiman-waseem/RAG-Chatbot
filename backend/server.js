@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import pdfRoutes from "./routes/pdfRoutes.js";
+import { allRoutes } from "./route.js";
 
 dotenv.config();
 
@@ -11,7 +12,8 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/pdf", pdfRoutes);
+// app.use("/api/pdf", pdfRoutes);
+allRoutes(app);
 
 const PORT = process.env.PORT || 5000;
 
