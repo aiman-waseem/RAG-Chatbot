@@ -29,3 +29,27 @@ export const uploadPDF = async (req, res) => {
     });
   }
 };
+
+export const uploadPDFF = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "PDF is required",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "PDF uploaded successfully",
+            data: req.file,
+        });
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+};

@@ -22,7 +22,7 @@
 // });
 
 import dotenv from "dotenv";
-import app from "./app.js";
+import app from "./src/app.js";
 
 dotenv.config();
 
