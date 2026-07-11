@@ -11,6 +11,7 @@
 
 
 import { PDFParse } from "pdf-parse";
+import fs from "fs";
 
 export const extractPDFText = async (filePath) => {
   const parser = new PDFParse({
@@ -24,3 +25,13 @@ export const extractPDFText = async (filePath) => {
     await parser.destroy();
   }
 };
+
+
+
+// export const extractPDFText = async (filePath) => {
+//     const buffer = fs.readFileSync(filePath);
+
+//     const pdf = await PDFParse(buffer);
+
+//     return pdf.text;
+// };

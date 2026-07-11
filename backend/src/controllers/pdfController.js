@@ -1,6 +1,11 @@
+import prisma from "../config/dbConnection.js";
+import { createEmbedding } from "../services/embedding.service.js";
 import { extractPDFText } from "../services/pdfService.js";
+import { chunkText } from "../utils/chunkText.js";
 
 export const uploadPDF = async (req, res) => {
+ 
+
   try {
     // File uploaded by Multer
     const file = req.file;
@@ -31,6 +36,9 @@ export const uploadPDF = async (req, res) => {
 };
 
 export const uploadPDFF = async (req, res) => {
+      const embeddedChunks = [];
+ console.log("HELLO AIMAN")
+
     try {
         if (!req.file) {
             return res.status(400).json({
@@ -38,12 +46,37 @@ export const uploadPDFF = async (req, res) => {
                 message: "PDF is required",
             });
         }
+        const document = await prisma.document.create({
+  data: {
+    title: req.body.title || req.file.originalname,
+    filename: req.file.filename,
+  },
+});
+const text = await extractPDFText(req.file.path);
+        const chunks = chunkText(text);
 
-        res.status(200).json({
-            success: true,
-            message: "PDF uploaded successfully",
-            data: req.file,
-        });
+        for (const chunk of chunks) {
+  const embedding = await createEmbedding(chunk);
+
+  embeddedChunks.push({
+    chunk,
+    embedding,
+  });
+}
+await prisma.documentChunk.createMany({
+  data: embeddedChunks.map((item, index) => ({
+    chunkText: item.chunk,
+    embedding: item.embedding,
+    chunkIndex: index,
+    documentId: document.id,
+  })),
+});
+
+       return res.status(200).json({
+  success: true,
+  documentId: document.id,
+  totalChunks: embeddedChunks.length,
+});
     } catch (error) {
         console.error(error);
 
